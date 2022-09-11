@@ -193,7 +193,7 @@ export default function Sidebar() {
                   </div>
                   {toggleStorage && (
                     <div className="flex gap-x-2 justify-evenly items-center flex-wrap">
-                      {savedCities &&
+                      {savedCities.length > 0 ? (
                         savedCities.map((savedCity) => {
                           return (
                             <p
@@ -213,7 +213,12 @@ export default function Sidebar() {
                               </svg>
                             </p>
                           );
-                        })}
+                        })
+                      ) : (
+                        <div className="text-red-500 text-sm">
+                          Sorry, you do not have any saved location.
+                        </div>
+                      )}
                     </div>
                   )}
                 </section>
