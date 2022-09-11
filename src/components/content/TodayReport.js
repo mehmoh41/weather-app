@@ -1,18 +1,74 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import moment from "moment/moment";
+import Loader from "../loader/Loader";
 
-export default function TodayReport() {
+export default function TodayReport({ weatherData }) {
+  const [airQuality, setAirQuality] = useState({});
+  const [UVI, setUVI] = useState();
+  const [loader, setLoader] = useState(false);
+  var lat = weatherData.city && weatherData.city.coord.lat;
+  var lon = weatherData.city && weatherData.city.coord.lon;
+  console.log("weatherData from report", weatherData);
+  const url = `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&lang=en&appid=d14070f98f6d39fc4f31bc9942b35333`;
+  const urlUVI = `https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&lang=en&appid=d14070f98f6d39fc4f31bc9942b35333`;
+  useEffect(() => {
+    setLoader(true);
+    fetch(url)
+      .then((res) => res.json())
+      .then((result) => {
+        setAirQuality(result);
+        setLoader(false);
+      });
+  }, [url]);
+  useEffect(() => {
+    setLoader(true);
+    fetch(urlUVI)
+      .then((res) => res.json())
+      .then((result) => {
+        setUVI(result);
+        setLoader(false);
+      });
+  }, [urlUVI]);
+  console.log("air quality", airQuality);
+  function convertTo12() {
+    var output = convertUnixToTime(
+      weatherData.city ? weatherData.city.sunset : ""
+    );
+    return moment(output, ["HH:mm"]).format("hh:mm A");
+  }
+
+  function convertUnixToTime(unix_timestamp) {
+    // Create a new JavaScript Date object based on the timestamp
+    // multiplied by 1000 so that the argument is in milliseconds, not seconds.
+    var date = new Date(unix_timestamp * 1000);
+    // Hours part from the timestamp
+    var hours = date.getHours();
+    // Minutes part from the timestamp
+    var minutes = "0" + date.getMinutes();
+    // Seconds part from the timestamp
+    // var seconds = "0" + date.getSeconds();
+
+    // Will display time in 10:30:23 format
+    var formattedTime = hours + ":" + minutes.substr(-2);
+
+    return formattedTime;
+  }
+
   return (
     <section>
       <h2 className="font-medium text-xl">Today Hightlight</h2>
       <div className="grid grid-cols-12 my-5 gap-4">
         <div className="col-span-6 flex flex-col gap-5 w-full bg-white justify-between items-center p-3">
           <h5 className="font-normal text-gray-400">UV index</h5>
-          <h1 className="font-normal text-4xl text-center">5 %</h1>
+          <h1 className="font-normal text-4xl text-center">
+            {UVI && Math.round(UVI.value)}
+          </h1>
         </div>
         <div className="col-span-6 flex flex-col gap-5 w-full bg-white justify-between items-center p-3">
           <h5 className="font-normal text-gray-400">Wind Status</h5>
           <h1 className="font-normal text-4xl text-center">
-            2.7 <span className="text-sm text-gray-300">km/h</span>
+            {weatherData.list ? weatherData.list[0].wind.speed : ""}{" "}
+            <span className="text-sm text-gray-300">km/h</span>
           </h1>
         </div>
       </div>
@@ -87,9 +143,11 @@ export default function TodayReport() {
               />
             </svg>
             <p className="flex flex-col">
-              <span className="font-medium text-md leading-tight">6:30 AM</span>
-              <span className="text-gray-400 font-sm leading-tight">
-                - 2m 46s
+              <span className="font-medium text-md leading-tight">
+                {convertUnixToTime(
+                  weatherData.city ? weatherData.city.sunrise : ""
+                )}{" "}
+                AM
               </span>
             </p>
           </div>
@@ -161,9 +219,8 @@ export default function TodayReport() {
               />
             </svg>
             <p className="flex flex-col">
-              <span className="font-medium text-md leading-tight">6:30 AM</span>
-              <span className="text-gray-400 font-sm leading-tight">
-                - 2m 46s
+              <span className="font-medium text-md leading-tight">
+                {convertTo12()}
               </span>
             </p>
           </div>
@@ -173,7 +230,8 @@ export default function TodayReport() {
             <h5 className="text-gray-400 font-normal">Humidity</h5>
 
             <h2 className="text-6xl font-normal">
-              12 <span className="text-base text-gray-400">%</span>
+              {weatherData.list ? weatherData?.list[0]?.main.humidity : ""}{" "}
+              <span className="text-base text-gray-400">%</span>
             </h2>
             <p className="text-md">
               Status : <span className="text-blue-500">Good Quality</span>
@@ -185,7 +243,8 @@ export default function TodayReport() {
             <h5 className="text-gray-400 font-normal">Visibility</h5>
 
             <h2 className="text-6xl font-normal">
-              11.9 <span className="text-base text-gray-400">km/h</span>
+              {weatherData.list ? weatherData?.list[0]?.visibility / 1000 : ""}{" "}
+              <span className="text-base text-gray-400">km/h</span>
             </h2>
             <p className="text-md">
               Status : <span className="text-yellow-500">Average</span>
@@ -193,14 +252,19 @@ export default function TodayReport() {
           </div>
         </div>
         <div className="col-span-12 xl:col-span-3 sm:col-span-6 bg-white p-3">
-          <div className="flex justify-evenly flex-col gap-6 py-3">
-            <h5 className="text-gray-400 font-normal">Air Quality</h5>
+          {loader ? (
+            <Loader />
+          ) : (
+            <div className="flex justify-evenly flex-col gap-6 py-3">
+              <h5 className="text-gray-400 font-normal">Air Quality</h5>
 
-            <h2 className="text-6xl font-normal">122</h2>
-            <p className="text-md">
-              Status : <span className="text-red-400">Bad Quality</span>
-            </p>
-          </div>
+              <h2 className="text-6xl font-normal">working on AQI</h2>
+              <p className="text-md">
+                Status :{" "}
+                <span className="text-green-400">Good Air Quality</span>
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </section>
