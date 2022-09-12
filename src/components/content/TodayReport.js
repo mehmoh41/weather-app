@@ -39,7 +39,7 @@ export default function TodayReport({ weatherCity }) {
           setAirQuality(result);
           setLoader(false);
         });
-  }, [url]);
+  }, [url, weatherData]);
   useEffect(() => {
     setLoader(true);
     fetch(urlUVI)
@@ -50,8 +50,7 @@ export default function TodayReport({ weatherCity }) {
       });
   }, [urlUVI]);
   function convertTo12() {
-    var output = convertUnixToTime();
-    // weatherData.city ? weatherData.city.sunset : ""
+    let output = convertUnixToTime(weatherData.city && weatherData.city.sunset);
     return moment(output, ["HH:mm"]).format("hh:mm A");
   }
 
