@@ -21,7 +21,7 @@ export default function Sidebar() {
     setCity(city);
     // setToggleStorage(false);
   }
-  console.log("centigrade from sidebar", centigrade);
+
   useEffect(() => {
     setLoading(true);
 
@@ -104,7 +104,6 @@ export default function Sidebar() {
     localStorage.setItem("cities", JSON.stringify(cities));
   }
   const deleteCity = (cityName) => {
-    console.log("cityName", cityName);
     setToggleStorage(false);
     let cities = JSON.parse(localStorage.getItem("cities"));
     var index = cities.indexOf(cityName);
@@ -114,7 +113,6 @@ export default function Sidebar() {
     localStorage.setItem("cities", JSON.stringify(cities));
   };
   let savedCities = JSON.parse(localStorage.getItem("cities"));
-  console.log("sidebar", weather);
   return (
     <aside className="col-span-12 lg:col-span-3 sm:col-span-4 bg-blue-50 flex flex-col px-10">
       <form method="POST" className="my-5" onSubmit={fetchData}>
@@ -274,7 +272,7 @@ export default function Sidebar() {
                           </g>
                         </svg>
                       ) : (
-                        <span className="text-4xl  ml-1"> °F</span>
+                        <span className="text-4xl ml-1"> °F</span>
                       )}
                     </p>
                     <p className="flex items-center mt-4">

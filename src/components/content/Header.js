@@ -10,7 +10,6 @@ export default function Header() {
   const [faranColor, setFaranColor] = useState("bg-gray-200");
   const [weeklyColor, setWeeklyColor] = useState("text-gray-400");
   const [dailyColor, setDailyColor] = useState("text-blue-500");
-  console.log("toggle from header", toggleWeekly);
   return (
     <div className="flex items-center justify-between mt-6">
       <div className="flex items-center">
