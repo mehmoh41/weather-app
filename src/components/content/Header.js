@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useContext, useState } from "react";
+import { CentigradeContext } from "../../context/weather";
 
 export default function Header() {
+  const [centigrade, setCentigrade] = useContext(CentigradeContext);
+
   return (
     <div className="flex items-center justify-between mt-6">
       <div className="flex items-center">
@@ -10,7 +13,12 @@ export default function Header() {
         <h3 className="font-normal md:text-xl text-blue-500">Week</h3>
       </div>
       <div className="flex items-center">
-        <div className="bg-blue-400 w-8 h-8 rounded-full relative ml-2">
+        <div
+          className={`bg-blue-400 w-8 h-8 rounded-full relative ml-2 cursor-pointer`}
+          onClick={() => {
+            setCentigrade(true);
+          }}
+        >
           <svg
             viewBox="0 0 24 24"
             className="w-5 h-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -28,7 +36,10 @@ export default function Header() {
             </g>
           </svg>
         </div>
-        <div className="w-8 h-8 rounded-full bg-gray-300 ml-2 md:ml-4 relative">
+        <div
+          className={`w-8 h-8 rounded-full bg-gray-200 ml-2 md:ml-4 relative cursor-pointer text-white`}
+          onClick={() => setCentigrade(false)}
+        >
           <svg
             className="h-5 w-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
             viewBox="0 0 24 24"

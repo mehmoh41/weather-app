@@ -1,7 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { WeatherContext } from "../context/weather";
+import {
+  CentigradeContext,
+  LatLonContext,
+  WeatherContext,
+} from "../context/weather";
 import Loader from "./loader/Loader";
-const apiKey = "d14070f98f6d39fc4f31bc9942b35333";
+export const apiKey = "d14070f98f6d39fc4f31bc9942b35333";
 const apiUrl = "https://api.openweathermap.org/data/2.5/forecast";
 
 export default function Sidebar() {
@@ -9,13 +13,15 @@ export default function Sidebar() {
   const [city, setCity] = useState("Quetta");
   const [loading, setLoading] = useState(false);
   const [toggleStorage, setToggleStorage] = useState(false);
-  const [weatherData, setWeatherData] = useContext(WeatherContext);
+  const [weatherCity, setWeatherCity] = useContext(WeatherContext);
+  const [latLon, setLatLon] = useContext(LatLonContext);
+  const [centigrade, setCentigrade] = useContext(CentigradeContext);
   function cityChangeHandler(enteredCity) {
     let city = enteredCity.target.value;
     setCity(city);
     // setToggleStorage(false);
   }
-
+  console.log("centigrade from sidebar", centigrade);
   useEffect(() => {
     setLoading(true);
 
@@ -23,12 +29,13 @@ export default function Sidebar() {
       .then((res) => res.json())
       .then((result) => {
         setWeather(result);
-        setWeatherData(result);
+        setWeatherCity({ cityName: result.city.name });
+        // setWeatherData(result);
+        setLatLon({ lat: result.city.coord.lat, lon: result.city.coord.lon });
         setLoading(false);
       });
   }, []);
 
-  console.log("context", weatherData);
   async function fetchData(e) {
     setLoading(true);
     e.preventDefault();
@@ -36,7 +43,7 @@ export default function Sidebar() {
       .then((res) => res.json())
       .then((result) => {
         setWeather(result);
-        setWeatherData(result);
+        setLatLon({ lat: result.city.coord.lat, lon: result.city.coord.lon });
         setLoading(false);
         setToggleStorage(false);
       });
@@ -98,6 +105,7 @@ export default function Sidebar() {
   }
   const deleteCity = (cityName) => {
     console.log("cityName", cityName);
+    setToggleStorage(false);
     let cities = JSON.parse(localStorage.getItem("cities"));
     var index = cities.indexOf(cityName);
     if (index > -1) {
@@ -196,22 +204,26 @@ export default function Sidebar() {
                       {savedCities.length > 0 ? (
                         savedCities.map((savedCity) => {
                           return (
-                            <p
-                              className=" bg-blue-200 px-2 py-2 hover:bg-blue-300  my-1 mx-1 cursor-pointer rounded-sm flex items-center justify-evenly"
-                              onClick={() => setCity(savedCity)}
-                            >
-                              <span>{savedCity}</span>
-                              <svg
-                                className="w-8 h-8 mt-2 float-right hover:fill-red-400"
-                                xmlns="http://www.w3.org/2000/svg"
-                                onClick={() => deleteCity(savedCity)}
-                              >
-                                <path
-                                  fill-rule="evenodd"
-                                  d="M5.72 5.72a.75.75 0 011.06 0L12 10.94l5.22-5.22a.75.75 0 111.06 1.06L13.06 12l5.22 5.22a.75.75 0 11-1.06 1.06L12 13.06l-5.22 5.22a.75.75 0 01-1.06-1.06L10.94 12 5.72 6.78a.75.75 0 010-1.06z"
-                                />
-                              </svg>
-                            </p>
+                            <>
+                              <div className="flex items-center justify-between  bg-blue-200 px-2 py-2 hover:bg-blue-300 cursor-pointer rounded-sm">
+                                <p
+                                  className="w-20"
+                                  onClick={() => setCity(savedCity)}
+                                >
+                                  {savedCity}
+                                </p>
+                                <svg
+                                  className="w-8 h-8 mt-2 float-right hover:fill-red-400"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  onClick={() => deleteCity(savedCity)}
+                                >
+                                  <path
+                                    fill-rule="evenodd"
+                                    d="M5.72 5.72a.75.75 0 011.06 0L12 10.94l5.22-5.22a.75.75 0 111.06 1.06L13.06 12l5.22 5.22a.75.75 0 11-1.06 1.06L12 13.06l-5.22 5.22a.75.75 0 01-1.06-1.06L10.94 12 5.72 6.78a.75.75 0 010-1.06z"
+                                  />
+                                </svg>
+                              </div>
+                            </>
                           );
                         })
                       ) : (
@@ -230,30 +242,35 @@ export default function Sidebar() {
                 </div>
                 <div className="text border-b-2 border-indigo-200">
                   <h2 className="text-2xl font-medium flex items-center">
-                    <span className="inline-block font-normal tracking-widest text-5xl">
-                      {weather &&
-                        Math.round(weather?.list[0]?.main.temp - 273.15)}
+                    <span className="inline-block font-normal tracking-wide text-5xl">
+                      {weather && centigrade
+                        ? Math.round(weather?.list[0]?.main.temp - 273.15)
+                        : Math.round(weather?.list[0]?.main.temp)}
                     </span>
-                    <svg
-                      version="1.1"
-                      id="Capa_1"
-                      xmlns="http://www.w3.org/2000/svg"
-                      x="0px"
-                      y="0px"
-                      viewBox="0 0 25.924 25.924"
-                      className="w-8 h-8 ml-2"
-                    >
-                      <g>
-                        <path
-                          d="M4.699,2.278C2.107,2.278,0,4.386,0,6.977c0,2.593,2.107,4.698,4.699,4.698s4.7-2.106,4.699-4.698
-      C9.398,4.386,7.291,2.278,4.699,2.278z M4.699,9.327c-1.295,0-2.35-1.054-2.35-2.35c0-1.294,1.055-2.35,2.35-2.35
-      s2.35,1.055,2.35,2.35C7.049,8.273,5.994,9.327,4.699,9.327z M21.324,19.971c-3.91,0-6.227-2.463-6.227-6.369
-      c0-4.342,2.721-6.456,6.195-6.456c1.592,0,2.836,0.349,3.703,0.725l0.928-3.475c-0.782-0.435-2.52-0.869-4.807-0.869
-      c-5.904,0-10.652,3.678-10.652,10.336c0,5.558,3.475,9.783,10.221,9.783c2.346,0,4.198-0.464,4.979-0.841l-0.637-3.473
-      C24.131,19.709,22.683,19.971,21.324,19.971z"
-                        />
-                      </g>
-                    </svg>
+                    {centigrade ? (
+                      <svg
+                        version="1.1"
+                        id="Capa_1"
+                        xmlns="http://www.w3.org/2000/svg"
+                        x="0px"
+                        y="0px"
+                        viewBox="0 0 25.924 25.924"
+                        className="w-8 h-8 ml-2"
+                      >
+                        <g>
+                          <path
+                            d="M4.699,2.278C2.107,2.278,0,4.386,0,6.977c0,2.593,2.107,4.698,4.699,4.698s4.7-2.106,4.699-4.698
+    C9.398,4.386,7.291,2.278,4.699,2.278z M4.699,9.327c-1.295,0-2.35-1.054-2.35-2.35c0-1.294,1.055-2.35,2.35-2.35
+    s2.35,1.055,2.35,2.35C7.049,8.273,5.994,9.327,4.699,9.327z M21.324,19.971c-3.91,0-6.227-2.463-6.227-6.369
+    c0-4.342,2.721-6.456,6.195-6.456c1.592,0,2.836,0.349,3.703,0.725l0.928-3.475c-0.782-0.435-2.52-0.869-4.807-0.869
+    c-5.904,0-10.652,3.678-10.652,10.336c0,5.558,3.475,9.783,10.221,9.783c2.346,0,4.198-0.464,4.979-0.841l-0.637-3.473
+    C24.131,19.709,22.683,19.971,21.324,19.971z"
+                          />
+                        </g>
+                      </svg>
+                    ) : (
+                      <span className="text-4xl text-gray-500 ml-3"> K</span>
+                    )}
                   </h2>
                   <h4 className="my-3 tracking-wider">
                     <span className="font-bold mr-4">

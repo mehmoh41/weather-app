@@ -1,24 +1,42 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment/moment";
 import Loader from "../loader/Loader";
-
-export default function TodayReport({ weatherData }) {
+const apiKey = "d14070f98f6d39fc4f31bc9942b35333";
+const apiUrl = "https://api.openweathermap.org/data/2.5/forecast";
+export default function TodayReport({ weatherCity }) {
   const [airQuality, setAirQuality] = useState({});
+  const [weatherData, setWeatherData] = useState({});
   const [UVI, setUVI] = useState();
   const [loader, setLoader] = useState(false);
+  // var lat = weatherData.city && weatherData.city.coord.lat;
+  // var lon = weatherData.city && weatherData.city.coord.lon;
+
+  useEffect(() => {
+    // setLoading(true);
+
+    fetch(`${apiUrl}?q=${weatherCity.cityName}&appid=${apiKey}`)
+      .then((res) => res.json())
+      .then((result) => {
+        setWeatherData(result);
+        // setWeatherData(result);
+
+        // setLoading(false);
+      });
+  }, [weatherCity]);
+
   var lat = weatherData.city && weatherData.city.coord.lat;
   var lon = weatherData.city && weatherData.city.coord.lon;
-  console.log("weatherData from report", weatherData);
   const url = `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&lang=en&appid=d14070f98f6d39fc4f31bc9942b35333`;
   const urlUVI = `https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&lang=en&appid=d14070f98f6d39fc4f31bc9942b35333`;
   useEffect(() => {
     setLoader(true);
-    fetch(url)
-      .then((res) => res.json())
-      .then((result) => {
-        setAirQuality(result);
-        setLoader(false);
-      });
+    weatherData &&
+      fetch(url)
+        .then((res) => res.json())
+        .then((result) => {
+          setAirQuality(result);
+          setLoader(false);
+        });
   }, [url]);
   useEffect(() => {
     setLoader(true);
@@ -29,11 +47,9 @@ export default function TodayReport({ weatherData }) {
         setLoader(false);
       });
   }, [urlUVI]);
-  console.log("air quality", airQuality);
   function convertTo12() {
-    var output = convertUnixToTime(
-      weatherData.city ? weatherData.city.sunset : ""
-    );
+    var output = convertUnixToTime();
+    // weatherData.city ? weatherData.city.sunset : ""
     return moment(output, ["HH:mm"]).format("hh:mm A");
   }
 
@@ -258,7 +274,12 @@ export default function TodayReport({ weatherData }) {
             <div className="flex justify-evenly flex-col gap-6 py-3">
               <h5 className="text-gray-400 font-normal">Air Quality</h5>
 
-              <h2 className="text-6xl font-normal">working on AQI</h2>
+              <h2 className="text-6xl font-normal">
+                {airQuality.list &&
+                  airQuality.list.map((aqi) => {
+                    return aqi.main.aqi;
+                  })}
+              </h2>
               <p className="text-md">
                 Status :{" "}
                 <span className="text-green-400">Good Air Quality</span>
