@@ -210,7 +210,7 @@ export default function Sidebar() {
                   </div>
                   {toggleStorage && (
                     <div className="flex gap-x-2 justify-evenly items-center flex-wrap">
-                      {savedCities.length > 0 ? (
+                      {savedCities & (savedCities.length > 0) ? (
                         savedCities.map((savedCity) => {
                           return (
                             <>
