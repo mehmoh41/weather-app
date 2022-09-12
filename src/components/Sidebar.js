@@ -114,6 +114,7 @@ export default function Sidebar() {
     localStorage.setItem("cities", JSON.stringify(cities));
   };
   let savedCities = JSON.parse(localStorage.getItem("cities"));
+  console.log("sidebar", weather);
   return (
     <aside className="col-span-12 lg:col-span-3 sm:col-span-4 bg-blue-50 flex flex-col px-10">
       <form method="POST" className="my-5" onSubmit={fetchData}>
@@ -241,36 +242,79 @@ export default function Sidebar() {
                   />
                 </div>
                 <div className="text border-b-2 border-indigo-200">
-                  <h2 className="text-2xl font-medium flex items-center">
-                    <span className="inline-block font-normal tracking-wide text-5xl">
-                      {weather && centigrade
-                        ? Math.round(weather?.list[0]?.main.temp - 273.15)
-                        : Math.round(weather?.list[0]?.main.temp)}
-                    </span>
-                    {centigrade ? (
-                      <svg
-                        version="1.1"
-                        id="Capa_1"
-                        xmlns="http://www.w3.org/2000/svg"
-                        x="0px"
-                        y="0px"
-                        viewBox="0 0 25.924 25.924"
-                        className="w-8 h-8 ml-2"
-                      >
-                        <g>
-                          <path
-                            d="M4.699,2.278C2.107,2.278,0,4.386,0,6.977c0,2.593,2.107,4.698,4.699,4.698s4.7-2.106,4.699-4.698
+                  <h2 className="text-2xl font-medium flex items-center gap-4">
+                    <p className="flex items-center">
+                      <span className="inline-block font-normal tracking-wide text-5xl">
+                        {weather && centigrade
+                          ? Math.round(weather?.list[0]?.main.temp - 273.15)
+                          : Math.round(
+                              ((weather?.list[0]?.main.temp - 273.15) * 9) / 5 +
+                                32
+                            )}
+                      </span>
+                      {centigrade ? (
+                        <svg
+                          version="1.1"
+                          id="Capa_1"
+                          xmlns="http://www.w3.org/2000/svg"
+                          x="0px"
+                          y="0px"
+                          viewBox="0 0 25.924 25.924"
+                          className="w-8 h-8 ml-1"
+                        >
+                          <g>
+                            <path
+                              d="M4.699,2.278C2.107,2.278,0,4.386,0,6.977c0,2.593,2.107,4.698,4.699,4.698s4.7-2.106,4.699-4.698
     C9.398,4.386,7.291,2.278,4.699,2.278z M4.699,9.327c-1.295,0-2.35-1.054-2.35-2.35c0-1.294,1.055-2.35,2.35-2.35
     s2.35,1.055,2.35,2.35C7.049,8.273,5.994,9.327,4.699,9.327z M21.324,19.971c-3.91,0-6.227-2.463-6.227-6.369
     c0-4.342,2.721-6.456,6.195-6.456c1.592,0,2.836,0.349,3.703,0.725l0.928-3.475c-0.782-0.435-2.52-0.869-4.807-0.869
     c-5.904,0-10.652,3.678-10.652,10.336c0,5.558,3.475,9.783,10.221,9.783c2.346,0,4.198-0.464,4.979-0.841l-0.637-3.473
     C24.131,19.709,22.683,19.971,21.324,19.971z"
-                          />
-                        </g>
-                      </svg>
-                    ) : (
-                      <span className="text-4xl text-gray-500 ml-3"> K</span>
-                    )}
+                            />
+                          </g>
+                        </svg>
+                      ) : (
+                        <span className="text-4xl  ml-1"> °F</span>
+                      )}
+                    </p>
+                    <p className="flex items-center mt-4">
+                      <span className="inline-block font-normal tracking-wide text-xl text-gray-400">
+                        {weather && centigrade
+                          ? Math.round(
+                              weather?.list[0]?.main.feels_like - 273.15
+                            )
+                          : Math.round(
+                              ((weather?.list[0]?.main.feels_like - 273.15) *
+                                9) /
+                                5 +
+                                32
+                            )}
+                      </span>
+                      {centigrade ? (
+                        <svg
+                          version="1.1"
+                          id="Capa_1"
+                          xmlns="http://www.w3.org/2000/svg"
+                          x="0px"
+                          y="0px"
+                          viewBox="0 0 25.924 25.924"
+                          className="w-4 h-4 ml-1 fill-current text-gray-400"
+                        >
+                          <g>
+                            <path
+                              d="M4.699,2.278C2.107,2.278,0,4.386,0,6.977c0,2.593,2.107,4.698,4.699,4.698s4.7-2.106,4.699-4.698
+    C9.398,4.386,7.291,2.278,4.699,2.278z M4.699,9.327c-1.295,0-2.35-1.054-2.35-2.35c0-1.294,1.055-2.35,2.35-2.35
+    s2.35,1.055,2.35,2.35C7.049,8.273,5.994,9.327,4.699,9.327z M21.324,19.971c-3.91,0-6.227-2.463-6.227-6.369
+    c0-4.342,2.721-6.456,6.195-6.456c1.592,0,2.836,0.349,3.703,0.725l0.928-3.475c-0.782-0.435-2.52-0.869-4.807-0.869
+    c-5.904,0-10.652,3.678-10.652,10.336c0,5.558,3.475,9.783,10.221,9.783c2.346,0,4.198-0.464,4.979-0.841l-0.637-3.473
+    C24.131,19.709,22.683,19.971,21.324,19.971z"
+                            />
+                          </g>
+                        </svg>
+                      ) : (
+                        <span className="text-4xl text-gray-500 ml-1"> °F</span>
+                      )}
+                    </p>
                   </h2>
                   <h4 className="my-3 tracking-wider">
                     <span className="font-bold mr-4">

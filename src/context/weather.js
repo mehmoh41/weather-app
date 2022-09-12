@@ -2,6 +2,7 @@ import { createContext, useState } from "react";
 export const WeatherContext = createContext();
 export const LatLonContext = createContext();
 export const CentigradeContext = createContext();
+export const ToggleWeekly = createContext();
 export const WeatherProvider = (props) => {
   const [weatherCity, setWeatherCity] = useState({
     cityName: "",
@@ -30,5 +31,14 @@ export const CentrigradeProvider = (props) => {
     <CentigradeContext.Provider value={[centigrade, setCentigrade]}>
       {props.children}
     </CentigradeContext.Provider>
+  );
+};
+
+export const ToggleWeeklyDailyProvider = (props) => {
+  const [toggleWeekly, setToggleWeekly] = useState(false);
+  return (
+    <ToggleWeekly.Provider value={[toggleWeekly, setToggleWeekly]}>
+      {props.children}
+    </ToggleWeekly.Provider>
   );
 };

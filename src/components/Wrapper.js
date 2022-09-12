@@ -2,6 +2,7 @@ import React from "react";
 import {
   CentrigradeProvider,
   LatLonProvider,
+  ToggleWeeklyDailyProvider,
   WeatherProvider,
 } from "../context/weather";
 import Content from "./Content";
@@ -14,7 +15,9 @@ export default function Wrapper() {
         <CentrigradeProvider>
           <section id="wrapper" className="grid grid-cols-12">
             <Sidebar />
-            <Content />
+            <ToggleWeeklyDailyProvider>
+              <Content />
+            </ToggleWeeklyDailyProvider>
           </section>
         </CentrigradeProvider>
       </LatLonProvider>
