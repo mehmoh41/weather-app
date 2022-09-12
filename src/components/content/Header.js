@@ -9,25 +9,31 @@ export default function Header() {
   );
   const [faranColor, setFaranColor] = useState("bg-gray-200");
   const [weeklyColor, setWeeklyColor] = useState("text-gray-400");
-  const [dailyColor, setDailyColor] = useState("text-blue-500");
+  const [dailyColor, setDailyColor] = useState(
+    "text-blue-500 font-black border-b-2 border-blue-400 inline-block"
+  );
   return (
     <div className="flex items-center justify-between mt-6">
       <div className="flex items-center">
         <h3
-          className={`font-normal md:text-xl mr-2 md:mr-5 ${dailyColor} cursor-pointer hover:scale-110`}
+          className={`md:text-xl mr-2 md:mr-5 ${dailyColor} cursor-pointer hover:scale-110 tracking-wider`}
           onClick={() => {
             setToggleWeekly(false);
             setWeeklyColor("text-gray-400");
-            setDailyColor("text-blue-500");
+            setDailyColor(
+              "text-blue-500 font-black border-b-2 border-blue-400 inline-block"
+            );
           }}
         >
           Today
         </h3>
         <h3
-          className={`font-normal md:text-xl ${weeklyColor} cursor-pointer hover:scale-110`}
+          className={`md:text-xl ${weeklyColor} cursor-pointer hover:scale-110 tracking-wider ml-1`}
           onClick={() => {
             setToggleWeekly(true);
-            setWeeklyColor("text-blue-500");
+            setWeeklyColor(
+              "text-blue-500 font-black border-b-2 border-blue-400 inline-block"
+            );
             setDailyColor("text-gray-400");
           }}
         >
@@ -58,16 +64,6 @@ export default function Header() {
           <h2 className="text-xl font-bold absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white -ml-[2px]">
             °F
           </h2>
-        </div>
-        <div className="flex bg-white px-3 py-1 rounded-xl items-center ml-14">
-          <img
-            src="/images/user.jpg"
-            alt=""
-            className="w-8 h-8 rounded-full "
-          />
-          <p className="text-gray-700 font-regular tracking-wide ml-3">
-            Aliya scheil
-          </p>
         </div>
       </div>
     </div>

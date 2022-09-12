@@ -15,6 +15,7 @@ export default function Sidebar() {
   const [toggleStorage, setToggleStorage] = useState(false);
   const [weatherCity, setWeatherCity] = useContext(WeatherContext);
   const [latLon, setLatLon] = useContext(LatLonContext);
+  const [message, setMessage] = useState("");
   const [centigrade, setCentigrade] = useContext(CentigradeContext);
   function cityChangeHandler(enteredCity) {
     let city = enteredCity.target.value;
@@ -29,9 +30,12 @@ export default function Sidebar() {
       .then((res) => res.json())
       .then((result) => {
         setWeather(result);
-        setWeatherCity({ cityName: result.city.name });
+        setWeatherCity({ cityName: result && result.city.name });
         // setWeatherData(result);
-        setLatLon({ lat: result.city.coord.lat, lon: result.city.coord.lon });
+        setLatLon({
+          lat: result.city && result.city.coord.lat,
+          lon: result.city && result.city.coord.lon,
+        });
         setLoading(false);
       });
   }, []);
@@ -39,14 +43,22 @@ export default function Sidebar() {
   async function fetchData(e) {
     setLoading(true);
     e.preventDefault();
-    await fetch(`${apiUrl}?q=${city}&appid=${apiKey}`)
-      .then((res) => res.json())
-      .then((result) => {
-        setWeather(result);
-        setLatLon({ lat: result.city.coord.lat, lon: result.city.coord.lon });
-        setLoading(false);
-        setToggleStorage(false);
-      });
+
+    if (city) {
+      await fetch(`${apiUrl}?q=${city}&appid=${apiKey}`)
+        .then((res) => res.json())
+        .then((result) => {
+          setWeather(result);
+          setLatLon({
+            lat: result.city && result.city.coord.lat,
+            lon: result.city && result.city.coord.lon,
+          });
+          setLoading(false);
+          setToggleStorage(false);
+        });
+    } else {
+      setMessage("Please provide a city name.");
+    }
   }
   // var iconName = weather?.list[0]?.weather[0]?.icon;
   var size = 4;
@@ -149,10 +161,8 @@ export default function Sidebar() {
       {/* <Loader /> */}
       {
         // weather && city && city === weather.city?.name ? (
-        city === " " ? (
-          <div className="text-red-400 font-medium">
-            Please provide a city name.
-          </div>
+        !city ? (
+          <div className="text-red-400 font-medium">{message}</div>
         ) : !loading ? (
           weather ? (
             weather.cod !== "404" ? (
@@ -235,7 +245,9 @@ export default function Sidebar() {
                 </section>
                 <div className="icon my-10 mx-auto">
                   <img
-                    src={`https://openweathermap.org/img/wn/${weather?.list[0]?.weather[0]?.icon}@${size}x.png`}
+                    src={`https://openweathermap.org/img/wn/${
+                      weather.list && weather.list[0].weather[0].icon
+                    }@${size}x.png`}
                     alt="icon from openweathermap.org"
                   />
                 </div>
@@ -243,7 +255,7 @@ export default function Sidebar() {
                   <h2 className="text-2xl font-medium flex items-center gap-4">
                     <p className="flex items-center">
                       <span className="inline-block font-normal tracking-wide text-5xl">
-                        {weather && centigrade
+                        {weather.list && centigrade
                           ? Math.round(weather?.list[0]?.main.temp - 273.15)
                           : Math.round(
                               ((weather?.list[0]?.main.temp - 273.15) * 9) / 5 +
@@ -277,7 +289,7 @@ export default function Sidebar() {
                     </p>
                     <p className="flex items-center mt-4">
                       <span className="inline-block font-normal tracking-wide text-xl text-gray-400">
-                        {weather && centigrade
+                        {weather.list[0].main && centigrade
                           ? Math.round(
                               weather?.list[0]?.main.feels_like - 273.15
                             )
@@ -325,17 +337,18 @@ export default function Sidebar() {
                   <div className="flex items-center my-5">
                     <img
                       src={`https://openweathermap.org/img/wn/${
-                        weather?.list[0]?.weather[0]?.icon
+                        weather.list && weather?.list[0]?.weather[0]?.icon
                       }@${2}x.png`}
                       alt="icon from openweathermap.org"
                       className="w-16 h-16"
                     />
                     <h5 className="ml-5 font-light tracking-wider">
-                      {weather?.list[0]?.weather[0]?.description}
+                      {weather.list &&
+                        weather?.list[0]?.weather[0]?.description}
                     </h5>
                   </div>
                   <div className="flex items-center my-5">
-                    {weather?.rain && (
+                    {weather && weather?.rain && (
                       <>
                         <svg
                           version="1.1"
@@ -415,7 +428,8 @@ export default function Sidebar() {
                       className="w-64 h-36 shadow-md rounded-2xl"
                     />
                     <p className="absolute top-2 left-2 text-white">
-                      {weather.city?.name + ", " + weather.city?.country}
+                      {weather.city &&
+                        weather.city?.name + ", " + weather.city?.country}
                     </p>
                   </div>
                 </div>

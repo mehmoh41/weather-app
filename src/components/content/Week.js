@@ -36,12 +36,12 @@ export default function Week({ latLon }) {
         <h2 className="text-2xl border-b-2 border-blue-400 font-bold inline-block mt-8 mb-4">
           Weekly Report
         </h2>
-        <div className="grid grid-cols-12 items-center gap-6 my-8 flex-wrap">
+        <div className="grid grid-cols-12 items-center gap-4 md:gap-6 my-8 flex-wrap">
           {/* giving the weather data from tommorrow not today */}
           {week.daily &&
             week.daily.slice(1, 8).map((daily) => {
               return (
-                <div className="col-span-3 items-center justify-between bg-white shadow-md shadow-indigo-100 px-8 py-6">
+                <div className="col-span-6 md:col-span-3 items-center justify-between bg-white shadow-md shadow-indigo-100 px-8 py-6">
                   <p className="text-lg font-medium">{getDay(daily.dt)}</p>
                   <img
                     src={`https://openweathermap.org/img/wn/${
