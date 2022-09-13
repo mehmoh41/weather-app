@@ -1,11 +1,11 @@
 {
-    "theme_color": "#f69435",
-    "background_color": "#f69435",
+    "theme_color": "#90dce0",
+    "background_color": "#45bdbf",
     "display": "standalone",
     "scope": "/",
     "start_url": "/",
     "name": "weather app",
-    "short_name": "weather",
+    "short_name": "hawa",
     "description": "this is a weather app generated with react js.",
     "icons": [
         {
